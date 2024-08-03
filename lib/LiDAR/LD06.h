@@ -31,6 +31,7 @@ struct formattedPacket{ // 1パケの情報 181バイト
   double startAngle; // deg
   std::array<polarPoint, 12> polarPoints; // 極座標
   std::array<point, 12> points; // 直交座標
+  std::array<uint8_t, 12> confidence;
   double endAngle; // deg
   uint16_t timeStamp; // ms 30,000を超えたらリカウント
   uint8_t CRC;
