@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "array": "cpp"
+    },
+    "editor.indentSize": "tabSize",
+    "editor.tabSize": 2
+}

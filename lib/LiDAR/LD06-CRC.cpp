@@ -27,15 +27,12 @@ namespace LiDAR
     0x5a, 0x06, 0x4b, 0x9c, 0xd1, 0x7f, 0x32, 0xe5, 0xa8
   };
 
-  bool LD06::checkCRC(const std::array<uint8_t,47>& packet) {
+  bool LD06::checkCRC(const std::array<uint8_t,47>& packet) const {
     uint8_t crc = 0;
     for (auto it = packet.begin(); it != packet.end() - 1; it++) { // 最後のCRC自身は除く
       crc = CrcTable[(crc ^ *it) & 0xff];
     }
-    if (crc == packet.back()) {
-      return true;
-    }
-    else return false;
+    return (crc == packet.back());
   }
 
 }
