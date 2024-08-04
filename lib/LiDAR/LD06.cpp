@@ -32,7 +32,7 @@ void LD06::update(bool waitToRead, bool readAll) {
     if (readAll){
       while (updateSingle()); // 多分1番使う
     }
-    updateSingle();
+    else updateSingle();
   }
 }
 
@@ -55,15 +55,60 @@ bool LD06::updateSingle(){
   formattedPacket fPacket(packet);
   lastStartAngle = fPacket.startAngle;
   lastEndAngle = fPacket.endAngle;
+  latestfPacket = fPacket;
 
   Serial.print("time stamp: ");
   Serial.println(fPacket.timeStamp);
   return true;
 }
 
-void LD06::update360(){
+void LD06::update360() {
   update(true);
   double startAngle = lastStartAngle;
+  double accumulatedAngle = 0.0;
+
+  while (accumulatedAngle < 360.0) {
+    update(true);
+    double currentEndAngle = lastEndAngle;
+
+    double angleDifference = currentEndAngle - startAngle;
+    if (angleDifference < 0) {
+      angleDifference += 360.0;
+    }
+
+    accumulatedAngle += angleDifference;
+    startAngle = currentEndAngle;
+  }
+}
+
+std::vector<point> LD06::read(bool waitToRead, bool readAll) {
+  std::vector<point> packets;
+  if (waitToRead) {
+    while (!updateSingle()); // 1パケは強制で読む、2パケ以降は任意
+    mergePoints(latestfPacket, packets);
+    if (readAll) {
+      while (updateSingle()) mergePoints(latestfPacket, packets);
+    }
+  }
+  else {
+    if (readAll){
+      while (updateSingle()) mergePoints(latestfPacket, packets); // 多分1番使う
+    }
+    else {
+      if (updateSingle()) mergePoints(latestfPacket, packets);
+    }
+  }
+  return packets;
+}
+
+void LD06::mergePoints(const formattedPacket& fPacket, std::vector<point>& points) {
+  points.reserve(12);
+  std::copy(fPacket.points.begin(), fPacket.points.end(), std::back_inserter(points));
+}
+
+std::vector<point>& LD06::read360(bool ifUpdate) {
+  if (ifUpdate) update();
+  return pointCloud;
 }
 
 }

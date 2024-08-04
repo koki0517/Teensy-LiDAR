@@ -7,9 +7,14 @@
 
 namespace LiDAR {
 
-struct point{ // 点の直交座標
+struct point{
   double x;
   double y;
+
+  uint16_t r;
+  double theta;
+
+  uint8_t confidence;
 
   point operator+(const point& p)  const { return {x + p.x, y + p.y}; }
   point operator-(const point& p)  const { return {x - p.x, y - p.y}; }
@@ -17,25 +22,18 @@ struct point{ // 点の直交座標
   point operator/(const double& d) const { return {x / d, y / d}; }
 };
 
-struct polarPoint{ // 点の極座標
-  uint16_t r;
-  double theta;
-};
-
-struct formattedPacket{ // 1パケの情報 181バイト
+struct formattedPacket{ // 1パケの情報
   /* 0x54 ヘッダー
    * 0x2C データ長
    * 以上固定
    */
   uint16_t rodarSpeed; // deg/s
   double startAngle; // deg
-  std::array<polarPoint, 12> polarPoints; // 極座標
-  std::array<point, 12> points; // 直交座標
-  std::array<uint8_t, 12> confidence;
+  std::array<point, 12> points;
   double endAngle; // deg
   uint16_t timeStamp; // ms 30,000を超えたらリカウント
-  uint8_t CRC;
   formattedPacket(const std::array<uint8_t,47>& packet);
+  formattedPacket() = default;
 };
 
 class LD06 { // ちな5Hzで回ってた
@@ -51,7 +49,11 @@ public:
   void init();
   // メンバの配列を1パケ分更新
   void update(bool waitToRead = false /* バッファ内にない場合に待機して読むか */, bool readAll = true /*2パケ以降を読むか*/);
-  void update360(); // 一回転分のデータを取得
+  // 一回転分のデータを取得
+  void update360(); 
+
+  std::vector<point> read(bool waitToRead = false , bool readAll = true);
+  std::vector<point>& read360(bool ifUpdate = true);
 protected:
   #if not defined(TEENSYDUINO)
   uint8_t rxPin;
@@ -63,11 +65,14 @@ protected:
   const uint8_t HEADER = 0x54; // パケットの先頭
   const uint8_t DATA_LENGTH = 0x2C; // 2byte目にくる 1パケの中の点の数 12個で固定
 
+  std::vector<point> pointCloud;
   double lastStartAngle = 0;
   double lastEndAngle = 0;
+  formattedPacket latestfPacket;
 
   bool updateSingle();
   bool checkCRC(const std::array<uint8_t,47>& packet) const;
+  void mergePoints(const formattedPacket& fPacket, std::vector<point>& points);
 };
 
 }
