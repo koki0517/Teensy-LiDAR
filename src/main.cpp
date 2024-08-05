@@ -23,7 +23,11 @@ void loop() {
   for (auto& p : points){
     Serial.print(p.x);
     Serial.print(",");
-    Serial.println(p.y);
+    Serial.print(p.y);
+    Serial.print(",");
+    Serial.print(p.r);
+    Serial.print(",");
+    Serial.println(p.theta);
   }
   delay(1);
 }
