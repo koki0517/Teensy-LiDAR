@@ -13,8 +13,8 @@ formattedPacket::formattedPacket(const std::array<uint8_t, 47>& packet)
     points[i].theta = startAngle + interval * i;
     points[i].confidence = packet[8 + i * 3] / 100.0;
     // 極座標から直交座標に変換
-    points[i].x = points[i].r * cos(points[i].theta);
-    points[i].y = points[i].r * sin(points[i].theta);
+    points[i].x = points[i].r * cos(points[i].theta*M_PI/180.0);
+    points[i].y = points[i].r * sin(points[i].theta*M_PI/180.0);
   }
 }
 

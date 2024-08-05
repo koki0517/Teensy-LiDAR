@@ -2,8 +2,8 @@
 #include <Arduino.h>
 #include <vector>
 #include <array>
+#include <utility>
 #include <algorithm>
-#include <cfloat>
 
 namespace LiDAR {
 
@@ -23,10 +23,6 @@ struct point{
 };
 
 struct formattedPacket{ // 1パケの情報
-  /* 0x54 ヘッダー
-   * 0x2C データ長
-   * 以上固定
-   */
   uint16_t rodarSpeed; // deg/s
   double startAngle; // deg
   std::array<point, 12> points;
@@ -36,7 +32,7 @@ struct formattedPacket{ // 1パケの情報
   formattedPacket() = default;
 };
 
-class LD06 { // ちな5Hzで回ってた
+class LD06 {
 public:
   #if defined(TEENSYDUINO)
   // Teensyでの使用を想定
@@ -65,13 +61,14 @@ protected:
   const uint8_t HEADER = 0x54; // パケットの先頭
   const uint8_t DATA_LENGTH = 0x2C; // 2byte目にくる 1パケの中の点の数 12個で固定
 
-  std::vector<point> pointCloud;
+  std::vector<point> pointCloud = std::vector<point>(360);
   double lastStartAngle = 0;
   double lastEndAngle = 0;
   formattedPacket latestfPacket;
 
   bool updateSingle();
   bool checkCRC(const std::array<uint8_t,47>& packet) const;
+  void updatePointCloud(const formattedPacket& fPacket);
   void mergePoints(const formattedPacket& fPacket, std::vector<point>& points);
 };
 

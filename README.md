@@ -24,9 +24,15 @@ TeensyやESP32でLD06 LiDARを動かします。
     Teensyduino以外、ESP32を想定
 * `LiDAR::LD06::init()`  
     シリアルの初期化
-* `LiDAR::LD06::update()`  
-    バッファーにパケットが届いていればそれを読み取る  
-    ない場合は何もしない
+* `LiDAR::LD06::update(bool waitToRead = false , bool readAll = true)`  
+    `bool waitToRead` パケットが来ていないときは待つ  
+    `bool readAll` 複数パケットが来ているときは全て読む
+* `LiDAR::LD06::update()`   
+    360度分のデータを更新
+* `LiDAR::LD06::read(bool waitToRead = false , bool readAll = true)`   
+    1パケ分読む
+* `LiDAR::LD06::read360()`   
+    360度分読む
 
 # 参考
 1. [LD06 Development manual](https://storage.googleapis.com/mauser-public-images/prod_description_document/2021/315/8fcea7f5d479f4f4b71316d80b77ff45_096-6212_a.pdf)

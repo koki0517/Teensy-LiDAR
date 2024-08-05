@@ -57,8 +57,7 @@ bool LD06::updateSingle(){
   lastEndAngle = fPacket.endAngle;
   latestfPacket = fPacket;
 
-  Serial.print("time stamp: ");
-  Serial.println(fPacket.timeStamp);
+  updatePointCloud(fPacket);
   return true;
 }
 
@@ -109,6 +108,15 @@ void LD06::mergePoints(const formattedPacket& fPacket, std::vector<point>& point
 std::vector<point>& LD06::read360(bool ifUpdate) {
   if (ifUpdate) update();
   return pointCloud;
+}
+
+void LD06::updatePointCloud(const formattedPacket& fPacket){
+  if (pointCloud.size() == 0) {
+    std::copy(fPacket.points.begin(), fPacket.points.end(), std::back_inserter(pointCloud));
+  }
+  else {
+    // ToDo: めんどい
+  }
 }
 
 }

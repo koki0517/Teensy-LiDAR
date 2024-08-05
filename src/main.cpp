@@ -19,6 +19,11 @@ void setup() {
 }
 
 void loop() {
-  ld06.update(true);
+  std::vector<LiDAR::point> points = ld06.read(true);
+  for (auto& p : points){
+    Serial.print(p.x);
+    Serial.print(",");
+    Serial.println(p.y);
+  }
   delay(1);
 }
