@@ -1,8 +1,9 @@
 # Teensy-LiDAR
-TeensyやESP32でLD06 LiDARを動かします。  
+TeensyやESP32でLD06 LiDARを動かします。 ~~(車輪の再発明)~~  
 他のマイコンで動かす場合はコンストラクタのSerialをうまいこと設定してください。
 
-~~車輪の再発明~~
+最低でも8kBほどメモリを使います。
+
 # 開発環境
 * PlatformIO
 * Teensy4.1
@@ -37,7 +38,7 @@ TeensyやESP32でLD06 LiDARを動かします。
     内部にある1回転分のデータの参照を返す
 
 # 座標系
-> <img width="300" alt="photo" src="image.png">
+> <img width="300" alt="photo" src="image.png">  
 > https://storage.googleapis.com/mauser-public-images/prod_description_document/2021/315/8fcea7f5d479f4f4b71316d80b77ff45_096-6212_a.pdf
 * θ: 上図の通り
 * X軸: 上図右方向
