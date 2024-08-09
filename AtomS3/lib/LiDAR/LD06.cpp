@@ -25,17 +25,17 @@ formattedPacket::formattedPacket(const std::array<uint8_t, 47>& packet)
 #if defined(TEENSYDUINO)
 LD06::LD06(HardwareSerial& ser) :serial(ser) {}
 #else
-LD06::LD06(const uint8_t rx, HardwareSerial& ser) 
+LD06::LD06(HardwareSerial& ser, const uint8_t rx) 
   : serial(ser),
     rxPin(rx)
 {}
 #endif
 
-void LD06::init() {
+void LD06::init() const {
   #if defined(TEENSYDUINO)
   serial.begin(BAUD_RATE);
   #else
-  serial.begin(BAUD_RATE, SERIAL_8N1, rx_pin);
+  serial.begin(BAUD_RATE, SERIAL_8N1, rxPin);
   #endif
 }
 
@@ -43,8 +43,10 @@ bool LD06::updateSingle(){
   while (1){
     if (serial.available() < PACKET_LENGTH) return false;
     if (serial.read() == HEADER){
-      if (serial.read() == DATA_LENGTH) break;
-    }
+      if (serial.read() == DATA_LENGTH) {
+        break;
+      } else Serial.println("D");
+    } else Serial.println("H");
   }
 
   std::array<uint8_t,47> packet{};
@@ -53,7 +55,10 @@ bool LD06::updateSingle(){
   for (auto it = packet.begin() + 2; it != packet.end(); it++){ // 先頭を2バイトを避けて読む
     *it = serial.read();
   }
-  if (!checkCRC(packet)) return false; // CRCが合わない場合は無視
+  if (!checkCRC(packet)) {
+    Serial.println("CRC");
+    return false; // CRCが合わない場合は無視
+  }
   
   formattedPacket fPacket(packet);
   latestfPacket = fPacket;

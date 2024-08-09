@@ -40,17 +40,17 @@ public:
   LD06(HardwareSerial& ser = Serial1);
   #else
   // ESP32での使用を想定
-  LD06(const uint8_t rx, HardwareSerial& ser = Serial1);
+  LD06(HardwareSerial& ser, const uint8_t rx);
   #endif
 
-  void init();
+  void init() const;
+  bool updateSingle();
   std::vector<point> read(bool waitToRead = false , bool readAll = true); // 指定分の座標データを取得
 protected:
   formattedPacket latestfPacket;
 
-  bool updateSingle();
   void mergePoints(const formattedPacket& fPacket, std::vector<point>& points);
-  void serialFlush(){ while (serial.available()) serial.read(); }
+  void serialFlush() const { while (serial.available()) serial.read(); }
 private:
   #if not defined(TEENSYDUINO)
   uint8_t rxPin;

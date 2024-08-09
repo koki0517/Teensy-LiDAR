@@ -25,17 +25,17 @@ formattedPacket::formattedPacket(const std::array<uint8_t, 47>& packet)
 #if defined(TEENSYDUINO)
 LD06::LD06(HardwareSerial& ser) :serial(ser) {}
 #else
-LD06::LD06(const uint8_t rx, HardwareSerial& ser) 
+LD06::LD06(HardwareSerial& ser, const uint8_t rx) 
   : serial(ser),
     rxPin(rx)
 {}
 #endif
 
-void LD06::init() {
+void LD06::init() const {
   #if defined(TEENSYDUINO)
   serial.begin(BAUD_RATE);
   #else
-  serial.begin(BAUD_RATE, SERIAL_8N1, rx_pin);
+  serial.begin(BAUD_RATE, SERIAL_8N1, rxPin);
   #endif
 }
 
