@@ -62,12 +62,12 @@ bool LD06::updateSingle(){
 }
 
 bool LD06::checkCRC(const std::array<uint8_t,47>& packet) const {
-    uint8_t crc = 0;
-    for (auto it = packet.begin(); it != packet.end() - 1; it++) { // 最後のCRC自身は除く
-      crc = CrcTable[(crc ^ *it) & 0xff];
-    }
-    return (crc == packet.back());
+  uint8_t crc = 0;
+  for (auto it = packet.begin(); it != packet.end() - 1; it++) { // 最後のCRC自身は除く
+    crc = CrcTable[(crc ^ *it) & 0xff];
   }
+  return (crc == packet.back());
+}
 
 std::vector<point> LD06::read(bool waitToRead, bool readAll) {
   std::vector<point> packets;
