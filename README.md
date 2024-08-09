@@ -26,16 +26,10 @@ TeensyやESP32でLD06 LiDARを動かします。 ~~(車輪の再発明)~~
     Teensyduino以外、ESP32を想定
 * `void LiDAR::LD06::init()`  
     シリアルの初期化
-* `void LiDAR::LD06::update(bool waitToRead = false , bool readAll = true)`   
-    指定分更新する  
-    `bool waitToRead` パケットが来ていないときは待つ  
-    `bool readAll` 複数パケットが来ているときは全て読む
-* `void LiDAR::LD06::update()`   
-    360度分のデータを更新
 * `std::vector<LiDAR::point> LiDAR::LD06::read(bool waitToRead = false , bool readAll = true)`   
-    指定分読む
-* `std::vector<LiDAR::point>& LiDAR::LD06::read360()`   
-    内部にある1回転分のデータの参照を返す
+    指定分読む  
+    * `bool waitToRead` パケットが来ていないときは待つ  
+    * `bool readAll` 複数パケットが来ているときは全て読む
 
 # 座標系
 > <img width="300" alt="photo" src="image.png">  

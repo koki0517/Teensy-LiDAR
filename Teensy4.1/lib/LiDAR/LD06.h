@@ -44,7 +44,7 @@ public:
   #endif
 
   void init();
-  std::vector<point> read(bool waitToRead = false , bool readAll = true); // 1パケの座標データを取得
+  std::vector<point> read(bool waitToRead = false , bool readAll = true); // 指定分の座標データを取得
 protected:
   formattedPacket latestfPacket;
 
