@@ -44,11 +44,11 @@ public:
   #endif
 
   void init() const;
-  bool updateSingle();
   std::vector<point> read(bool waitToRead = false , bool readAll = true); // 指定分の座標データを取得
 protected:
   formattedPacket latestfPacket;
 
+  bool updateSingle();
   void mergePoints(const formattedPacket& fPacket, std::vector<point>& points);
   void serialFlush() const { while (serial.available()) serial.read(); }
 private:

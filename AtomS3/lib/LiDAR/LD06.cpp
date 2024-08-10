@@ -101,4 +101,9 @@ void LD06::mergePoints(const formattedPacket& fPacket, std::vector<point>& point
   }
 }
 
+std::array<point, 12> LD06::readSingle(){
+  while (!updateSingle());
+  return latestfPacket.points;
+}
+
 }
