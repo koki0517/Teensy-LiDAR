@@ -12,9 +12,9 @@ struct point{
   double x;
   double y;
 
-  uint16_t r;
   double theta;
-
+  uint16_t r;
+  
   uint8_t confidence;
 
   point operator+(const point& p)  const { return {x + p.x, y + p.y}; }

@@ -12,15 +12,18 @@ struct point{
   double x;
   double y;
 
-  uint16_t r;
-  double theta;
-
   uint8_t confidence;
 
   point operator+(const point& p)  const { return {x + p.x, y + p.y}; }
+  point operator+=(const point& p)  const { return {x + p.x, y + p.y}; }
   point operator-(const point& p)  const { return {x - p.x, y - p.y}; }
   point operator*(const double& d) const { return {x * d, y * d}; }
   point operator/(const double& d) const { return {x / d, y / d}; }
+};
+
+struct polarPoint{
+  uint16_t r;
+  double theta;
 };
 
 struct formattedPacket{ // 1パケの情報
@@ -31,16 +34,17 @@ struct formattedPacket{ // 1パケの情報
   uint16_t timeStamp; // ms 30,000を超えたらリカウント
   formattedPacket(const std::array<uint8_t,47>& packet);
   formattedPacket() = default;
+  static point ROBOT_POINT_DIFF;
 };
 
 class LD06 {
 public:
   #if defined(TEENSYDUINO)
   // Teensyでの使用を想定
-  LD06(HardwareSerial& ser = Serial1);
+  LD06(point robotPoint, HardwareSerial& ser = Serial1);
   #else
   // ESP32での使用を想定
-  LD06(HardwareSerial& ser = Serial1, const uint8_t rx);
+  LD06(point robotPoint, HardwareSerial& ser = Serial1, const uint8_t rx);
   #endif
 
   void init() const;

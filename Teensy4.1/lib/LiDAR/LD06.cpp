@@ -2,6 +2,8 @@
 
 namespace LiDAR {
 
+point formattedPacket::ROBOT_POINT_DIFF = {0, 0};
+
 formattedPacket::formattedPacket(const std::array<uint8_t, 47>& packet)
   : rodarSpeed(packet[3] << 8 | packet[2]),
     startAngle((packet[5] << 8 | packet[4]) / 100.0),
@@ -12,23 +14,23 @@ formattedPacket::formattedPacket(const std::array<uint8_t, 47>& packet)
     interval = (360.0 - startAngle + endAngle) / 11.0;
   }
   for (int i = 0; i < 12; i++) {
-    points[i].r = packet[7 + i * 3] << 8 | packet[6 + i * 3];
-    points[i].theta = startAngle + interval * i;
-    if (points[i].theta >= 360.0) points[i].theta -= 360.0;
+    uint16_t r = packet[7 + i * 3] << 8 | packet[6 + i * 3];
+    double theta = startAngle + interval * i;
+    if (theta >= 360.0) theta -= 360.0;
     points[i].confidence = packet[8 + i * 3];
     // 極座標から直交座標に変換 "README.md#座標系"を参照
-    points[i].x = points[i].r * sin(points[i].theta*M_PI/180.0);
-    points[i].y = points[i].r * cos(points[i].theta*M_PI/180.0);
+    points[i].x = r * sin(theta*M_PI/180.0);
+    points[i].y = r * cos(theta*M_PI/180.0);
+    points[i] += ROBOT_POINT_DIFF; // ロボット座標系に変換
   }
 }
 
 #if defined(TEENSYDUINO)
-LD06::LD06(HardwareSerial& ser) :serial(ser) {}
+LD06::LD06(point robotPoint, HardwareSerial& ser) 
+  : serial(ser) { formattedPacket::ROBOT_POINT_DIFF = robotPoint*(-1); }
 #else
-LD06::LD06(HardwareSerial& ser, const uint8_t rx) 
-  : serial(ser),
-    rxPin(rx)
-{}
+LD06::LD06(point robotPoint, HardwareSerial& ser, const uint8_t rx) 
+  : serial(ser), rxPin(rx) {  formattedPacket::ROBOT_POINT_DIFF = robotPoint*(-1);  }
 #endif
 
 void LD06::init() const {
