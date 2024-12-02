@@ -11,14 +11,19 @@ namespace LiDAR {
 struct point{
   double x;
   double y;
+  double theta;
 
   uint8_t confidence;
 
   point operator+(const point& p)  const { return {x + p.x, y + p.y}; }
-  point operator+=(const point& p)  const { return {x + p.x, y + p.y}; }
   point operator-(const point& p)  const { return {x - p.x, y - p.y}; }
   point operator*(const double& d) const { return {x * d, y * d}; }
   point operator/(const double& d) const { return {x / d, y / d}; }
+  point& operator+=(const point& p) {
+    this->x += p.x;
+    this->y += p.y;
+    return *this;
+  }
 };
 
 struct polarPoint{

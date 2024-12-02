@@ -3,7 +3,7 @@
 #include <array>
 #include <algorithm>
 
-LiDAR::LD06 ld06({0,0}, Serial1);
+LiDAR::LD06 ld06({500,500}, Serial1);
 
 #if defined(TEENSYDUINO)
 static uint8_t s1bufsize[128];
@@ -15,7 +15,7 @@ void setup() {
   analogWriteFrequency (23, 30000);
   analogWrite(23, 256*0.50);
   delay(110);
-  analogWrite(23, 256*0.8);
+  analogWrite(23, 256*0.3);
   #endif
 
   Serial.begin(115200);
@@ -29,6 +29,6 @@ void loop() {
     Serial.print(", ");
     Serial.print(p.y);
     Serial.print(", ");
-    Serial.println(p.confidence);
+    Serial.println(p.theta);
   }
 }
